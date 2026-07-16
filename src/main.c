@@ -26,7 +26,8 @@ int main(void)
 {
     /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
     HAL_Init();
-    
+
+    /* Configure the system clock to 64/72 MHz */
     SystemClock_Config();
 
     /* Initialize all configured peripherals */
@@ -43,8 +44,10 @@ int main(void)
 
     if ((xSensorQueue != NULL) && (xModbusSemaphore != NULL))
     {
+        /* 2. Enable UART RX Interrupt to receive the first byte */
         HAL_UART_Receive_IT(&huart1, &g_rx_byte, 1);
 
+        /* 3. Create FreeRTOS Tasks (Modbus communication set to highest priority: 4) */
         xTaskCreate(vTaskSensorSimulation, "SensorSim", 128, NULL, 1, NULL);
         xTaskCreate(vTaskControlLogic, "CtrlLogic", 128, NULL, 2, NULL);
         xTaskCreate(vTaskModbusCommunication, "ModbusComm", 256, NULL, 4, NULL);
@@ -252,3 +255,16 @@ void SysTick_Handler(void)
     }
     #endif
 }
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void USART1_IRQHandler(void)
+{
+    HAL_UART_IRQHandler(&huart1);
+}
+
+#ifdef __cplusplus
+}
+#endif
