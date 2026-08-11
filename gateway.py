@@ -8,6 +8,7 @@ import paho.mqtt.client as mqtt
 from colorama import Fore, Style, init
 import minimalmodbus
 import serial
+from include import gateway
 
 # Initialize colorama for cross-platform colored terminal logging
 init(autoreset=True)
@@ -22,12 +23,10 @@ MODBUS_TIMEOUT = 1.0  # seconds
 SLAVE_ID = 1
 POLL_INTERVAL = 1.0  # seconds
 
-# Northbound Configuration (LOCAL MQTT BROKER)
-# Đổi thành IP local của Broker (Ví dụ: "127.0.0.1", "192.168.1.100", v.v.)
-MQTT_BROKER = "127.0.0.1"
-MQTT_PORT = 1883
-MQTT_TOPIC = "factory/woodworking/node01/telemetry"
-DEVICE_ID = "WOOD_FACTORY_NODE_01"
+MQTT_BROKER = gateway.MQTT_BROKER
+MQTT_PORT = gateway.MQTT_PORT
+MQTT_TOPIC = gateway.MQTT_TOPIC
+DEVICE_ID = gateway.DEVICE_ID
 
 # Logging setup
 logging.basicConfig(
